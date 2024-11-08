@@ -18,11 +18,14 @@ const GiveFeedback = ({good, setGood, neutral, setNeutral, bad, setBad}) => {
   )
 }
 
-const StatisticsLine = ({text, value}) => {
+const StatisticsLine = ({text, value, symbol}) => {
   return (
-    <div>
-      {text} {value}
-    </div>
+    <tbody>
+      <tr>
+        <td>{text}</td>
+        <td>{value}{symbol}</td>        
+      </tr>        
+    </tbody>
   )
 }
 
@@ -33,11 +36,13 @@ const Statistics = ({good, neutral, bad}) => {
   if (total) {
     return (
       <div>
-        <StatisticsLine text='good' value={good}/>
-        <StatisticsLine text='neutral' value={neutral}/>
-        <StatisticsLine text='bad' value={bad}/>
-        <StatisticsLine text='average' value={average}/>
-        positive {positive}%
+        <table>
+          <StatisticsLine text='good' value={good}/>
+          <StatisticsLine text='neutral' value={neutral}/>
+          <StatisticsLine text='bad' value={bad}/>
+          <StatisticsLine text='average' value={average}/> 
+          <StatisticsLine text='positive' value={positive} symbol='%'/> 
+        </table>
       </div>
     )
   }
