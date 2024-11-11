@@ -1,19 +1,5 @@
 import Course from './components/Course'
 
-function sum(parts){
-  let t = 0
-  parts.forEach(value => t = t + value.exercises)
-  return t
-}
-
-const Total = (pros) => {
-  return (
-    <div>
-      <p>Number of exercises {sum(pros.course.parts)}</p>
-    </div>
-  )
-}
-
 const App = () => {
   const course = {
     id: 1,
@@ -38,14 +24,6 @@ const App = () => {
   }
 
   return <Course course={course} />
-
-  return (
-    <div>
-      <Header course={course} />
-      <Content course={course}/>
-      <Total course={course}/>
-    </div>
-  )
 }
 
 export default App
