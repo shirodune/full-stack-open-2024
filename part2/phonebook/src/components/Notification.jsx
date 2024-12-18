@@ -1,6 +1,6 @@
-const Notification = ({message}) => {
+const Notification = ({message, color}) => {
   const errorStyle = {
-    color: 'green',
+    color,
     background: 'lightgrey',
     fontSize: 20,
     borderStyle: 'solid',
@@ -8,6 +8,8 @@ const Notification = ({message}) => {
     padding: 10,
     marginBottom: 10 
   }
+  console.log(errorStyle);
+  
   if(message === null) {
     return null
   }

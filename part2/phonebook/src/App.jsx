@@ -10,7 +10,8 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newPhone, setNewPhone] = useState('')
   const [filterName, setFilterName] = useState('')
-  const [errorMessage, setErrorMessage] = useState(null)
+  const [message, setMessage] = useState(null)
+  const [color, setColor] = useState('green')
 
   useEffect(() => {
     personService
@@ -37,6 +38,14 @@ const App = () => {
     setFilterName(event.target.value)
   }
 
+  const setAlterMessage = (message, color) => {
+    setMessage(message)
+    setColor(color)
+    setTimeout(() => {
+      setMessage(null)
+    }, 5000)
+  }
+
   const addPerson = (event) => {
     event.preventDefault()
 
@@ -52,10 +61,7 @@ const App = () => {
           .then(response => {
             console.log(response);
             setPersons(persons.map(person => person.id === personObject.id? response : person))
-            setErrorMessage(`Updated ${newName}`)
-            setTimeout(() => {
-              setErrorMessage(null)
-            }, 5000)
+            setAlterMessage(`Updated ${newName}`, 'green')
           })
           .catch(error => {
             console.log('fail');
@@ -70,10 +76,7 @@ const App = () => {
       .create(personObject)
       .then(response => {
         setPersons(persons.concat(response))
-        setErrorMessage(`Added ${newName}`)
-        setTimeout(() => {
-          setErrorMessage(null)
-        }, 5000)
+        setAlterMessage(`Added ${newName}`, 'green')
       })      
     }
 
@@ -84,15 +87,19 @@ const App = () => {
   const deletePerson = (id) => {
     const person = persons.find(p => p.id === id)
     if (window.confirm(`Delete ${person.name} ?`)) {
-      if(personService.deletePerson(id)) {
-        alert(`${person.name} has deleted!`)
-        personService
-        .getAll()
-        .then(response => {
-          setPersons(response)
+      personService
+        .deletePerson(id)
+        .then(t => {
+          personService
+          .getAll()
+          .then(response => {
+            setPersons(response)
+            alert(`${person.name} has deleted!`)
+          })
         })
-      }
-      else alert(`delete failed`)
+        .catch(error => {
+          setAlterMessage(`Information of ${person.name} has already been removed from server`, 'red')
+        })
     }
   }
 
@@ -100,7 +107,7 @@ const App = () => {
     <div>
       <h2>Phonebook</h2>
 
-      <Notification message={errorMessage} />
+      <Notification message={message} color={color}/>
 
       <Filter filterName={filterName} handleFilterNameChange={handleFilterNameChange} />
 
