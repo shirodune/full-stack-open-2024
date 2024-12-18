@@ -2,14 +2,15 @@ import { useEffect, useState } from 'react'
 import Filter from './components/Filter'
 import Persons from './components/Persons'
 import PersonForm from './components/PersonForm'
-import axios from 'axios'
 import personService from './services/persons'
+import Notification from './components/Notification'
 
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newPhone, setNewPhone] = useState('')
   const [filterName, setFilterName] = useState('')
+  const [errorMessage, setErrorMessage] = useState(null)
 
   useEffect(() => {
     personService
@@ -51,6 +52,10 @@ const App = () => {
           .then(response => {
             console.log(response);
             setPersons(persons.map(person => person.id === personObject.id? response : person))
+            setErrorMessage(`Updated ${newName}`)
+            setTimeout(() => {
+              setErrorMessage(null)
+            }, 5000)
           })
           .catch(error => {
             console.log('fail');
@@ -65,6 +70,10 @@ const App = () => {
       .create(personObject)
       .then(response => {
         setPersons(persons.concat(response))
+        setErrorMessage(`Added ${newName}`)
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
       })      
     }
 
@@ -90,6 +99,8 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+
+      <Notification message={errorMessage} />
 
       <Filter filterName={filterName} handleFilterNameChange={handleFilterNameChange} />
 
