@@ -5,6 +5,7 @@ import Countries from './compenents/Countries'
 const App = () => {
   const [countries, setCountries] = useState([])
   const [search, setSearch] = useState('')
+  const [countryToShow, setCountryToShow] = useState(null)
   
   useEffect(() => {
     axios
@@ -17,14 +18,17 @@ const App = () => {
   const handleSearchChange = (event) => {
     console.log(event.target.value)
     setSearch(event.target.value)
+  }
 
+  const handleSetCountryToShow = (country) => {
+    setCountryToShow(country)
   }
 
   return (
     <div>
       <p>Hello world</p>
       <Search search={search} handleSearchChange={handleSearchChange} />
-      <Countries countries={filterCountries}/>
+      <Countries countries={filterCountries} countryToShow={countryToShow} handleSetCountryToShow={handleSetCountryToShow} />
     </div>
   )
 }
