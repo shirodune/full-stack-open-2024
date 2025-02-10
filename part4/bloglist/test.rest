@@ -1,0 +1,32 @@
+GET http://localhost:3001/api/persons HTTP/1.1
+
+###
+
+GET http://localhost:3001/api/persons/1 HTTP/1.1
+
+###
+
+GET http://localhost:3001/api/persons/67899b94f364891a4639acd1 HTTP/1.1
+
+###
+
+DELETE http://localhost:3001/api/persons/2 HTTP/1.1
+
+###
+
+POST http://localhost:3001/api/persons/ HTTP/1.1
+content-type: application/json
+
+{
+    "name": "Yan Abramov", 
+    "number": "12-44-234345"
+}
+
+###
+
+POST http://localhost:3001/api/persons/ HTTP/1.1
+content-type: application/json
+
+{
+    "number": "12-44-234345"
+}

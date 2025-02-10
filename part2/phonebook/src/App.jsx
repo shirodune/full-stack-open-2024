@@ -64,7 +64,8 @@ const App = () => {
             setAlterMessage(`Updated ${newName}`, 'green')
           })
           .catch(error => {
-            console.log('fail');
+            console.log(error)
+            setAlterMessage(error.response.data.error, 'red')
           })
       }
     } else {
@@ -73,11 +74,15 @@ const App = () => {
         number: newPhone
       }
       personService
-      .create(personObject)
-      .then(response => {
-        setPersons(persons.concat(response))
-        setAlterMessage(`Added ${newName}`, 'green')
-      })      
+        .create(personObject)
+        .then(response => {
+          setPersons(persons.concat(response))
+          setAlterMessage(`Added ${newName}`, 'green')
+        })
+        .catch(error => {
+          console.log(error)
+          setAlterMessage(error.response.data.error, 'red')
+        })
     }
 
     setNewName('')
