@@ -15,12 +15,13 @@ const userExtractor = (request, response, next) => {
   
   if (authorization && authorization.startsWith('Bearer ')) {
     const decodedToken = jwt.verify(authorization.replace('Bearer ', ''), process.env.SECRET)
-    if (!decodedToken.id) {
-      return response.status(401).json({error: 'token invalid'})
+    if (decodedToken.id) {
+      request.user = decodedToken.id
+      next()
+      return
     }
-    request.user = decodedToken.id
   }
-  next()
+  return response.status(401).json({error: 'token invalid'})
 }
 
 const unknownEndpoint = (request, response) => {

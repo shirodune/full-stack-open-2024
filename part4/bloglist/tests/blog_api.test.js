@@ -8,28 +8,44 @@ const app = require('../app')
 const api = supertest(app)
 
 const Blog = require('../models/Blog')
+const User = require('../models/User')
+const bcrypt = require('bcrypt')
 
 describe('when there are some blogs saved initially', () => {
+  let token = null
   beforeEach( async () => {
+    await User.deleteMany({})
+
+    const passwordHash = await bcrypt.hash('sekret', 10)
+    const user = new User({username: 'root', passwordHash})
+
+    await user.save()
+
     await Blog.deleteMany({})
-    await Blog.insertMany(helper.initialBlogs)
+    await Blog.insertMany(helper.initialBlogs.map(blog => ({ ...blog, user: user._id.toString()})))
+    const response = await api
+      .post('/api/login')
+      .set('Authorization', token)
+      .send({username: 'root', password: 'sekret'})
+    token = 'Bearer ' + response.body.token
   })
 
   test('blogs are returned as json', async () => {
     await api
       .get('/api/blogs')
+      .set('Authorization', token)
       .expect(200)
       .expect('Content-Type', /application\/json/)
   })
 
   test('all blogs are returned', async () => {
-    const response = await api.get('/api/blogs')
+    const response = await api.get('/api/blogs').set('Authorization', token)
 
     assert.strictEqual(response.body.length, helper.initialBlogs.length)
   })  
 
   test('the unique identifier property of the blog is named id', async () => {
-    const response = await api.get('/api/blogs')
+    const response = await api.get('/api/blogs').set('Authorization', token)
     const blogs = response.body
 
     assert("id" in blogs[0])
@@ -46,6 +62,7 @@ describe('when there are some blogs saved initially', () => {
 
       await api
         .post('/api/blogs')
+        .set('Authorization', token)
         .send(newBlog)
         .expect(201)
         .expect('Content-Type', /application\/json/)
@@ -63,6 +80,7 @@ describe('when there are some blogs saved initially', () => {
     
       await api
         .post('/api/blogs')
+        .set('Authorization', token)
         .send(newBlog)
         .expect(201)
         .expect('Content-Type', /application\/json/)
@@ -72,6 +90,22 @@ describe('when there are some blogs saved initially', () => {
       assert.strictEqual(savedBlog.likes, 0)
     })
     
+    test('fails with status code 401 if token is missing', async () => {
+      const newBlog = {
+        author: 'abc',
+        url:'https'
+      }
+    
+      const result = await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(401)
+      assert(result.body.error.includes('token invalid'))
+      
+      const blogs = await helper.blogsInDb()
+      assert.strictEqual(blogs.length, helper.initialBlogs.length)
+    })
+
     test('fails with status code 400 if title invalid', async () => {
       const newBlog = {
         author: 'abc',
@@ -80,6 +114,7 @@ describe('when there are some blogs saved initially', () => {
     
       await api
         .post('/api/blogs')
+        .set('Authorization', token)
         .send(newBlog)
         .expect(400)
       
@@ -95,6 +130,7 @@ describe('when there are some blogs saved initially', () => {
     
       await api
         .post('/api/blogs')
+        .set('Authorization', token)
         .send(newBlog)
         .expect(400)
       
@@ -110,6 +146,7 @@ describe('when there are some blogs saved initially', () => {
 
       await api
         .delete(`/api/blogs/${blogToDelete.id}`)
+        .set('Authorization', token)
         .expect(204)
       
       const blogsAtEnd = await helper.blogsInDb()
@@ -133,6 +170,7 @@ describe('when there are some blogs saved initially', () => {
 
       await api
         .put(`/api/blogs/${blogsAtStart[0].id}`)
+        .set('Authorization', token)
         .send(blogToUpdate)
       
       const blogsAtEnd = await helper.blogsInDb()
