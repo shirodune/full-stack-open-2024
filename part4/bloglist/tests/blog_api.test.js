@@ -145,7 +145,6 @@ describe('when there are some blogs saved initially', () => {
   })
 })
 
-
 after(async () => {
   await mongoose.connection.close()
 })
