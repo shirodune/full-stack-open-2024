@@ -2,6 +2,10 @@ GET http://localhost:3001/api/blogs
 
 ###
 
+GET http://localhost:3001/api/users
+
+###
+
 GET http://localhost:3001/api/persons/1 HTTP/1.1
 
 ###
@@ -24,19 +28,27 @@ content-type: application/json
 
 ###
 
-POST http://localhost:3001/api/persons/ HTTP/1.1
+POST http://localhost:3001/api/blogs
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3QiLCJpZCI6IjY3YjFjMTNjMjYwMDdjYzhiMjYwY2U4ZSIsImlhdCI6MTczOTcxMTI5OH0.x1oYA58-RV6apro8GnSmcPIRAJR7_cytQyzqnD8VcZY
 content-type: application/json
 
 {
-    "number": "12-44-234345"
+  "title": "test3",
+  "author": "root",
+  "url": "https"
 }
 
 ###
 
-post http://localhost:3001/api/login 
+POST http://localhost:3001/api/login 
 Content-Type: application/json
 
 {
   "username": "root",
   "password": "123456"
 }
+
+### 
+
+DELETE http://localhost:3001/api/blogs/67b1c2004376f8f416b9153f
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3QiLCJpZCI6IjY3YjFjMTNjMjYwMDdjYzhiMjYwY2U4ZSIsImlhdCI6MTczOTcxMTI5OH0.x1oYA58-RV6apro8GnSmcPIRAJR7_cytQyzqnD8VcZY
