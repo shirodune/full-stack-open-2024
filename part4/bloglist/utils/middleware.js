@@ -11,7 +11,9 @@ const requestLogger = (request, response, next) => {
 
 const userExtractor = (request, response, next) => {
   const authorization = request.get('authorization')
-  console.log(authorization);
+  console.log(authorization)
+  console.log(request.method)
+  
   
   if (authorization && authorization.startsWith('Bearer ')) {
     const decodedToken = jwt.verify(authorization.replace('Bearer ', ''), process.env.SECRET)
@@ -21,7 +23,12 @@ const userExtractor = (request, response, next) => {
       return
     }
   }
-  return response.status(401).json({error: 'token invalid'})
+  if (request.method === 'GET') {
+    next()
+    return
+  } else {
+    return response.status(401).json({error: 'token invalid'})
+  }
 }
 
 const unknownEndpoint = (request, response) => {
