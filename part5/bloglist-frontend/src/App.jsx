@@ -18,7 +18,7 @@ const App = () => {
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
-    )  
+    )
   }, [])
 
   useEffect(() => {
@@ -54,8 +54,6 @@ const App = () => {
     }
   }
 
-
-
   const logout = () => {
     setUser(null)
     window.localStorage.removeItem('loggedblogappUser')
@@ -65,26 +63,26 @@ const App = () => {
     <form onSubmit={handleLogin}>
       <div>
         username
-          <input
-            type="text"
-            value={username}
-            name="Username"
-            onChange={({ target }) => setUsername(target.value)}
-          />
+        <input
+          type="text"
+          value={username}
+          name="Username"
+          onChange={({ target }) => setUsername(target.value)}
+        />
       </div>
       <div>
         password
-          <input
-            type="text"
-            value={password}
-            name="Password"
-            onChange={({ target }) => setPassword(target.value)}
-          />
+        <input
+          type="text"
+          value={password}
+          name="Password"
+          onChange={({ target }) => setPassword(target.value)}
+        />
       </div>
       <button type="submit">login</button>
     </form>
   )
-  
+
   const addBlog = async (blogObejct) => {
     blogFormRef.current.toggleVisibility()
     const newBlog = await blogService.create(blogObejct)
@@ -106,14 +104,13 @@ const App = () => {
   return (
     <div>
       <h1>Blogs</h1>
-      
       <Notification message={message} />
 
       {user === null ?
         loginForm() :
         <div>
           <p>
-            {user.name} logged-in 
+            {user.name} logged-in
             <button onClick={logout}>logout</button>
           </p>
           <Togglable buttonLabel="new note" ref={blogFormRef}>
@@ -121,7 +118,6 @@ const App = () => {
           </Togglable>
         </div>
       }
-      
       <h2>Blogs</h2>
       {blogs.sort((a, b) => a.likes > b.likes).map(blog =>
         <Blog key={blog.id} blog={blog} addLike={addLike} removeBlog={removeBlog} user={user}/>

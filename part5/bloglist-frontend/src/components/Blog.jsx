@@ -1,11 +1,11 @@
-import { useState } from "react"
+import { useState } from 'react'
 
 const Blog = ({ blog, addLike, removeBlog, user }) => {
   const [visible, setVisible] = useState(false)
-  
-  const showWhenVisible = {display: visible ? '' : 'none'}
-  const showWhenUser = {display: user.username === blog.user.username ? '' : 'none'}
-  
+
+  const showWhenVisible = { display: visible ? '' : 'none' }
+  const showWhenUser = { display: user.username === blog.user.username ? '' : 'none' }
+
   const toggleVisibility = () => {
     setVisible(!visible)
   }
@@ -13,7 +13,7 @@ const Blog = ({ blog, addLike, removeBlog, user }) => {
   const handleClike = async (event) => {
     event.preventDefault()
     try {
-      await addLike({...blog, likes:blog.likes+1})
+      await addLike({ ...blog, likes:blog.likes+1 })
     } catch (exception) {
       console.log(exception)
     }
@@ -24,7 +24,7 @@ const Blog = ({ blog, addLike, removeBlog, user }) => {
     try {
       await removeBlog(blog)
     } catch (exception) {
-
+      console.log(exception)
     }
   }
 
@@ -51,11 +51,12 @@ const Blog = ({ blog, addLike, removeBlog, user }) => {
           </div>
           <div>{blog.user.name}</div>
           <div style={showWhenUser}>
-          <button onClick={handleClikeDelete}>remove</button>
+            <button onClick={handleClikeDelete}>remove</button>
           </div>
         </div>
       </div>
     </div>
-)}
+  )
+}
 
 export default Blog
