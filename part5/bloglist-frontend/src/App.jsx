@@ -1,20 +1,19 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
 import BlogForm from './components/BlogForm'
+import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
 const App = () => {
-  const [blogFormVisible, setBlogFormVisible] = useState(false)
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
   const [message, setMessage] = useState(null)
+
+  const blogFormRef = useRef()
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -86,54 +85,22 @@ const App = () => {
     </form>
   )
   
-  const addBlog = async (event) => {
-    event.preventDefault()
-
-    try {
-      await blogService.create({
-        title, author, url
-      })
-      setMessage(`a new blog ${title} by ${author}`)   
-      setTimeout(() => {
-        setMessage(null)
-      }, 5000)   
-      setTitle('')
-      setAuthor('')
-      setUrl('')
-      blogService.getAll().then(blogs =>
-        setBlogs( blogs )
-      )
-      setTimeout(() => {
-        setMessage(null)
-      }, 5000)
-    } catch (exception) {
-      
-    }
+  const addBlog = async (blogObejct) => {
+    blogFormRef.current.toggleVisibility()
+    const newBlog = await blogService.create(blogObejct)
+    setBlogs(blogs.concat(newBlog))
   }
 
-  const blogForm = () => {
-    const hideWhenVisible = {display: blogFormVisible ? 'none' : ''}
-    const showWhenVisible = {display: blogFormVisible ? '' : 'none'}
+  const addLike = async (blogObejct) => {
+    const updateBlog = await blogService.update(blogObejct)
+    setBlogs(blogs.filter(blog => blog.id !== updateBlog.id).concat(updateBlog))
+  }
 
-    return (
-      <div>
-        <div style={hideWhenVisible}>
-          <button onClick={() => setBlogFormVisible(true)}>new note</button>
-        </div>
-        <div style={showWhenVisible}>
-          <BlogForm 
-            title={title}
-            author={author}
-            url={url}
-            handleTitleChange={({target}) => setTitle(target.value)}
-            handleAuthorChange={({target}) => setAuthor(target.value)}
-            handleUrlChange={({target}) => setUrl(target.value)}
-            handleSubmit={addBlog}
-          />
-          <button onClick={() => setBlogFormVisible(false)}>cancel</button>
-        </div>
-      </div>
-    )
+  const removeBlog = async (blogObejct) => {
+    if (window.confirm(`Remove blog ${blogObejct.title} by ${blogObejct.author}`)) {
+      const result = await blogService.deleteBlog(blogObejct.id)
+      setBlogs(blogs.filter(blog => blog.id !== blogObejct.id))
+    }
   }
 
   return (
@@ -149,13 +116,15 @@ const App = () => {
             {user.name} logged-in 
             <button onClick={logout}>logout</button>
           </p>
-          {blogForm()}
+          <Togglable buttonLabel="new note" ref={blogFormRef}>
+            <BlogForm createBlog={addBlog} setMessage={setMessage}/>
+          </Togglable>
         </div>
       }
       
       <h2>Blogs</h2>
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+      {blogs.sort((a, b) => a.likes > b.likes).map(blog =>
+        <Blog key={blog.id} blog={blog} addLike={addLike} removeBlog={removeBlog} user={user}/>
       )}
     </div>
   )
