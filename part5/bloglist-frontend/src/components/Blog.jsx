@@ -4,7 +4,7 @@ const Blog = ({ blog, addLike, removeBlog, user }) => {
   const [visible, setVisible] = useState(false)
 
   const showWhenVisible = { display: visible ? '' : 'none' }
-  const showWhenUser = { display: user.username === blog.user.username ? '' : 'none' }
+  const showWhenUser = { display: user && user.username === blog.user.username ? '' : 'none' }
 
   const toggleVisibility = () => {
     setVisible(!visible)

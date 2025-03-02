@@ -50,7 +50,7 @@ const App = () => {
       setMessage('Wrong credentials')
       setTimeout(() => {
         setMessage(null)
-      }, 5000)
+      }, 10000)
     }
   }
 
@@ -64,6 +64,7 @@ const App = () => {
       <div>
         username
         <input
+          data-testid='username'
           type="text"
           value={username}
           name="Username"
@@ -73,6 +74,7 @@ const App = () => {
       <div>
         password
         <input
+          data-testid='password'
           type="text"
           value={password}
           name="Password"
@@ -119,7 +121,7 @@ const App = () => {
         </div>
       }
       <h2>Blogs</h2>
-      {blogs.sort((a, b) => a.likes > b.likes).map(blog =>
+      {blogs.sort((a, b) => b.likes - a.likes).map(blog =>
         <Blog key={blog.id} blog={blog} addLike={addLike} removeBlog={removeBlog} user={user}/>
       )}
     </div>
