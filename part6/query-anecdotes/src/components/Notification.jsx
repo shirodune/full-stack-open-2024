@@ -1,4 +1,8 @@
+import { useCounterValve } from "../CounterContext"
+
 const Notification = () => {
+  const counter = useCounterValve()
+
   const style = {
     border: 'solid',
     padding: 10,
@@ -6,11 +10,11 @@ const Notification = () => {
     marginBottom: 5
   }
   
-  if (true) return null
+  if (counter === '') return null
 
   return (
     <div style={style}>
-      
+      {counter}
     </div>
   )
 }

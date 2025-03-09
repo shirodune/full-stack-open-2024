@@ -1,14 +1,23 @@
-import { useMutation, useQueries, useQueryClient } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { createAnecdote } from "../request"
+import { useCounterDispatch } from "../CounterContext"
 
 const AnecdoteForm = () => {
   const queryClient = useQueryClient()
+  const dispatch = useCounterDispatch()
 
   const newAnecdoteMutation = useMutation({
     mutationFn: createAnecdote,
     onSuccess: (newAnecdote) => {
+      dispatch({type: 'SET_MESSAGE', payload: `anecdote '${newAnecdote.content}' created`})
+      setTimeout(() => dispatch({type: 'SET_MESSAGE', payload: ''}), 5000)
       const anecdotes = queryClient.getQueryData(['anecdotes'])
       queryClient.setQueryData(['anecdotes'], anecdotes.concat(newAnecdote))
+    },
+    onError: (error) =>{
+      dispatch({type: 'SET_MESSAGE', payload: error.response.data.error})
+      console.log(error.response.data.error)
+      setTimeout(() => dispatch({type: 'SET_MESSAGE', payload: ''}), 5000)
     }
   })
 
