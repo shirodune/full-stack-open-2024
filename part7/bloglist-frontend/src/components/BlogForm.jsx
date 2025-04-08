@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
+import { createBlog } from "../reducers/blogReducer";
 import { setNotification } from "../reducers/notificationReducer";
 
-const BlogForm = ({ createBlog }) => {
+const BlogForm = ({ blogFormRef }) => {
   const dispatch = useDispatch()
 
   const [title, setTitle] = useState("");
@@ -14,16 +15,17 @@ const BlogForm = ({ createBlog }) => {
     event.preventDefault();
 
     try {
-      await createBlog({
-        title,
-        author,
-        url,
-      });
-      dispatch(setNotification(`a new blog ${title} by ${author}`, 5000))
-
       setTitle("");
       setAuthor("");
       setUrl("");
+      blogFormRef.current.toggleVisibility();
+
+      dispatch(createBlog({
+        title,
+        author,
+        url,
+      }))
+      dispatch(setNotification(`a new blog ${title} by ${author}`, 5000))
     } catch (exception) {
       console.log(exception);
     }

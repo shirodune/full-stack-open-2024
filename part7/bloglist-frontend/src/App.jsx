@@ -10,19 +10,15 @@ import loginService from "./services/login";
 import { setNotification } from "./reducers/notificationReducer";
 
 const App = () => {
-  const dispatch = useDispatch()
+  const blogs = useSelector(
+    state => state.blogs
+  )
 
-  const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
-  const [message, setMessage] = useState(null);
 
   const blogFormRef = useRef();
-
-  useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs));
-  }, []);
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser");
@@ -83,12 +79,6 @@ const App = () => {
     </form>
   );
 
-  const addBlog = async (blogObejct) => {
-    blogFormRef.current.toggleVisibility();
-    const newBlog = await blogService.create(blogObejct);
-    setBlogs(blogs.concat(newBlog));
-  };
-
   const addLike = async (blogObejct) => {
     const updateBlog = await blogService.update(blogObejct);
     setBlogs(
@@ -119,13 +109,13 @@ const App = () => {
             <button onClick={logout}>logout</button>
           </p>
           <Togglable buttonLabel="new note" ref={blogFormRef}>
-            <BlogForm createBlog={addBlog}/>
+            <BlogForm blogFormRef={blogFormRef}/>
           </Togglable>
         </div>
       )}
       <h2>Blogs</h2>
       {blogs
-        .sort((a, b) => b.likes - a.likes)
+        .toSorted((a, b) => b.likes - a.likes)
         .map((blog) => (
           <Blog
             key={blog.id}
