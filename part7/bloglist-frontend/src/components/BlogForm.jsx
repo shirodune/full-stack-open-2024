@@ -1,31 +1,33 @@
-import { useState } from 'react'
+import { useState } from "react";
 
 const BlogForm = ({ createBlog, setMessage }) => {
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
+  const [title, setTitle] = useState("");
+  const [author, setAuthor] = useState("");
+  const [url, setUrl] = useState("");
 
   const addBlog = async (event) => {
-    event.preventDefault()
+    event.preventDefault();
 
     try {
       await createBlog({
-        title, author, url
-      })
-      setMessage(`a new blog ${title} by ${author}`)
+        title,
+        author,
+        url,
+      });
+      setMessage(`a new blog ${title} by ${author}`);
       setTimeout(() => {
-        setMessage(null)
-      }, 5000)
-      setTitle('')
-      setAuthor('')
-      setUrl('')
+        setMessage(null);
+      }, 5000);
+      setTitle("");
+      setAuthor("");
+      setUrl("");
       setTimeout(() => {
-        setMessage(null)
-      }, 5000)
+        setMessage(null);
+      }, 5000);
     } catch (exception) {
-      console.log(exception)
+      console.log(exception);
     }
-  }
+  };
 
   return (
     <div>
@@ -40,7 +42,7 @@ const BlogForm = ({ createBlog, setMessage }) => {
             value={title}
             name="Title"
             onChange={({ target }) => setTitle(target.value)}
-            placeholder='write a title'
+            placeholder="write a title"
           />
         </div>
         <div>
@@ -51,7 +53,7 @@ const BlogForm = ({ createBlog, setMessage }) => {
             value={author}
             name="Author"
             onChange={({ target }) => setAuthor(target.value)}
-            placeholder='write a author'
+            placeholder="write a author"
           />
         </div>
         <div>
@@ -62,13 +64,13 @@ const BlogForm = ({ createBlog, setMessage }) => {
             value={url}
             name="Url"
             onChange={({ target }) => setUrl(target.value)}
-            placeholder='write a url'
+            placeholder="write a url"
           />
         </div>
         <button type="submit">create</button>
       </form>
     </div>
-  )
-}
+  );
+};
 
-export default BlogForm
+export default BlogForm;
