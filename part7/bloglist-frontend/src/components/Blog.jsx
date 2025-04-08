@@ -1,6 +1,9 @@
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { addLike, removeBLog } from "../reducers/blogReducer";
 
-const Blog = ({ blog, addLike, removeBlog, user }) => {
+const Blog = ({ blog, user }) => {
+  const dispatch = useDispatch()
   const [visible, setVisible] = useState(false);
 
   const showWhenVisible = { display: visible ? "" : "none" };
@@ -15,7 +18,7 @@ const Blog = ({ blog, addLike, removeBlog, user }) => {
   const handleClike = async (event) => {
     event.preventDefault();
     try {
-      await addLike({ ...blog, likes: blog.likes + 1 });
+      dispatch(addLike({ ...blog, likes: blog.likes + 1 }))
     } catch (exception) {
       console.log(exception);
     }
@@ -24,7 +27,11 @@ const Blog = ({ blog, addLike, removeBlog, user }) => {
   const handleClikeDelete = async (event) => {
     event.preventDefault();
     try {
-      await removeBlog(blog);
+      if (
+        window.confirm(`Remove blog ${blog.title} by ${blog.author}`)
+      ) {
+        dispatch(removeBLog(blog))
+      }
     } catch (exception) {
       console.log(exception);
     }

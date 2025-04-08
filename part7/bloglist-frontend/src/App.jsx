@@ -79,22 +79,6 @@ const App = () => {
     </form>
   );
 
-  const addLike = async (blogObejct) => {
-    const updateBlog = await blogService.update(blogObejct);
-    setBlogs(
-      blogs.filter((blog) => blog.id !== updateBlog.id).concat(updateBlog),
-    );
-  };
-
-  const removeBlog = async (blogObejct) => {
-    if (
-      window.confirm(`Remove blog ${blogObejct.title} by ${blogObejct.author}`)
-    ) {
-      const result = await blogService.deleteBlog(blogObejct.id);
-      setBlogs(blogs.filter((blog) => blog.id !== blogObejct.id));
-    }
-  };
-
   return (
     <div>
       <h1>Blogs</h1>
@@ -120,8 +104,6 @@ const App = () => {
           <Blog
             key={blog.id}
             blog={blog}
-            addLike={addLike}
-            removeBlog={removeBlog}
             user={user}
           />
         ))}
