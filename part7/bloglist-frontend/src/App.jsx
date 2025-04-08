@@ -5,18 +5,17 @@ import Blog from "./components/Blog";
 import Notification from "./components/Notification";
 import BlogForm from "./components/BlogForm";
 import Togglable from "./components/Togglable";
-import blogService from "./services/blogs";
-import loginService from "./services/login";
+import { setUser, Login } from "./reducers/userReducer"
 import { setNotification } from "./reducers/notificationReducer";
 
 const App = () => {
-  const blogs = useSelector(
-    state => state.blogs
-  )
+  const dispatch = useDispatch()
+
+  const blogs = useSelector( state => state.blogs )
+  const user = useSelector( state => state.user )
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [user, setUser] = useState(null);
 
   const blogFormRef = useRef();
 
@@ -25,7 +24,6 @@ const App = () => {
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON);
       setUser(user);
-      blogService.setToken(user.token);
     }
   }, []);
 
@@ -33,17 +31,14 @@ const App = () => {
     event.preventDefault();
 
     try {
-      const user = await loginService.login({
-        username,
-        password,
-      });
-
+      dispatch(Login(username, password))
       window.localStorage.setItem("loggedBlogappUser", JSON.stringify(user));
-      blogService.setToken(user.token);
       setUser(user);
       setUsername("");
       setPassword("");
     } catch (exception) {
+      console.log(exception);
+      
       dispatch(setNotification("Wrong credentials", 5000));
     }
   };
