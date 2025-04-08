@@ -1,6 +1,11 @@
 import { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 
-const BlogForm = ({ createBlog, setMessage }) => {
+import { setNotification } from "../reducers/notificationReducer";
+
+const BlogForm = ({ createBlog }) => {
+  const dispatch = useDispatch()
+
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [url, setUrl] = useState("");
@@ -14,16 +19,11 @@ const BlogForm = ({ createBlog, setMessage }) => {
         author,
         url,
       });
-      setMessage(`a new blog ${title} by ${author}`);
-      setTimeout(() => {
-        setMessage(null);
-      }, 5000);
+      dispatch(setNotification(`a new blog ${title} by ${author}`, 5000))
+
       setTitle("");
       setAuthor("");
       setUrl("");
-      setTimeout(() => {
-        setMessage(null);
-      }, 5000);
     } catch (exception) {
       console.log(exception);
     }

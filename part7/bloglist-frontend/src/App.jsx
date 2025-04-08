@@ -1,12 +1,17 @@
 import { useState, useEffect, useRef } from "react";
+import { useSelector, useDispatch } from "react-redux";
+
 import Blog from "./components/Blog";
 import Notification from "./components/Notification";
 import BlogForm from "./components/BlogForm";
 import Togglable from "./components/Togglable";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
+import { setNotification } from "./reducers/notificationReducer";
 
 const App = () => {
+  const dispatch = useDispatch()
+
   const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -43,10 +48,7 @@ const App = () => {
       setUsername("");
       setPassword("");
     } catch (exception) {
-      setMessage("Wrong credentials");
-      setTimeout(() => {
-        setMessage(null);
-      }, 10000);
+      dispatch(setNotification("Wrong credentials", 5000));
     }
   };
 
@@ -106,7 +108,7 @@ const App = () => {
   return (
     <div>
       <h1>Blogs</h1>
-      <Notification message={message} />
+      <Notification />
 
       {user === null ? (
         loginForm()
@@ -117,7 +119,7 @@ const App = () => {
             <button onClick={logout}>logout</button>
           </p>
           <Togglable buttonLabel="new note" ref={blogFormRef}>
-            <BlogForm createBlog={addBlog} setMessage={setMessage} />
+            <BlogForm createBlog={addBlog}/>
           </Togglable>
         </div>
       )}
