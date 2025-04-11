@@ -1,11 +1,13 @@
 import { useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 
 import { createBlog } from "../reducers/blogReducer";
-import { setNotification } from "../reducers/notificationReducer";
+
+import { useNotify } from "../NotificationContext";
 
 const BlogForm = ({ blogFormRef }) => {
   const dispatch = useDispatch()
+  const notifyWith = useNotify()
 
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
@@ -25,7 +27,7 @@ const BlogForm = ({ blogFormRef }) => {
         author,
         url,
       }))
-      dispatch(setNotification(`a new blog ${title} by ${author}`, 5000))
+      notifyWith(`a new blog ${title} by ${author}`)
     } catch (exception) {
       console.log(exception);
     }

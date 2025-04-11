@@ -6,10 +6,12 @@ import Notification from "./components/Notification";
 import BlogForm from "./components/BlogForm";
 import Togglable from "./components/Togglable";
 import { setUser, Login } from "./reducers/userReducer"
-import { setNotification } from "./reducers/notificationReducer";
+
+import { useNotify } from "./NotificationContext";
 
 const App = () => {
   const dispatch = useDispatch()
+  const notifyWith = useNotify()
 
   const blogs = useSelector( state => state.blogs )
   const user = useSelector( state => state.user )
@@ -37,9 +39,8 @@ const App = () => {
       setUsername("");
       setPassword("");
     } catch (exception) {
+      notifyWith("Wrong credentials")
       console.log(exception);
-      
-      dispatch(setNotification("Wrong credentials", 5000));
     }
   };
 
