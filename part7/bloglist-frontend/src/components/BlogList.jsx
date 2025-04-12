@@ -14,7 +14,7 @@ const BlogList = () => {
 
   return (
     <div>
-      <h2>Blogs</h2>
+      <h2>blog app</h2>
       {blogs
         .toSorted((a, b) => b.likes - a.likes)
         .map((blog) => (

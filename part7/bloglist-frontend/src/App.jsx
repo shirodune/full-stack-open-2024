@@ -96,7 +96,6 @@ const App = () => {
       </nav>
 
       <Notification />
-      <h2>blog app</h2>
 
       <Routes>
         <Route path="/" element={<BlogList />} />
