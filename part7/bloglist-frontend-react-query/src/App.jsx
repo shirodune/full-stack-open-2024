@@ -1,20 +1,23 @@
 import { useState, useEffect, useRef } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useQuery } from "@tanstack/react-query";
 
 import Blog from "./components/Blog";
 import Notification from "./components/Notification";
 import BlogForm from "./components/BlogForm";
 import Togglable from "./components/Togglable";
-import { setUser, Login } from "./reducers/userReducer"
+import blogService from './services/blogs';
 
 import { useNotify } from "./NotificationContext";
+import { useUserValue, useLogin, useLogout, useSetUser } from "./UserContext";
+
 
 const App = () => {
-  const dispatch = useDispatch()
+  const query = useQuery({ queryKey: ['blogs'], queryFn: blogService.getAll })
   const notifyWith = useNotify()
-
-  const blogs = useSelector( state => state.blogs )
-  const user = useSelector( state => state.user )
+  const user = useUserValue()
+  const login = useLogin()
+  const logout = useLogout()
+  const setUser = useSetUser()
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -23,19 +26,30 @@ const App = () => {
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser");
-    if (loggedUserJSON) {
+    if (loggedUserJSON && loggedUserJSON !== "null") {
       const user = JSON.parse(loggedUserJSON);
       setUser(user);
     }
   }, []);
 
+  if ( query.isLoading ) {
+    return <div>loading data...</div>
+  }
+
+  if ( query.isError) {
+    return (
+      <div>
+        blog service not available due to problems in server
+      </div>
+    )
+  }
+
   const handleLogin = async (event) => {
     event.preventDefault();
 
     try {
-      dispatch(Login(username, password))
-      window.localStorage.setItem("loggedBlogappUser", JSON.stringify(user));
-      setUser(user);
+      const result = await login({username, password})
+      window.localStorage.setItem("loggedBlogappUser", JSON.stringify(result));
       setUsername("");
       setPassword("");
     } catch (exception) {
@@ -44,8 +58,8 @@ const App = () => {
     }
   };
 
-  const logout = () => {
-    setUser(null);
+  const handleLogout = () => {
+    logout()
     window.localStorage.removeItem("loggedblogappUser");
   };
 
@@ -86,7 +100,7 @@ const App = () => {
         <div>
           <p>
             {user.name} logged-in
-            <button onClick={logout}>logout</button>
+            <button onClick={() => handleLogout()}>logout</button>
           </p>
           <Togglable buttonLabel="new note" ref={blogFormRef}>
             <BlogForm blogFormRef={blogFormRef}/>
@@ -94,8 +108,7 @@ const App = () => {
         </div>
       )}
       <h2>Blogs</h2>
-      {blogs
-        .toSorted((a, b) => b.likes - a.likes)
+      {query.data?.toSorted((a, b) => b.likes - a.likes)
         .map((blog) => (
           <Blog
             key={blog.id}

@@ -1,9 +1,26 @@
 import { useState } from "react";
-import { useDispatch } from "react-redux";
-import { addLike, removeBLog } from "../reducers/blogReducer";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+
+import blogService from '../services/blogs';
 
 const Blog = ({ blog, user }) => {
-  const dispatch = useDispatch()
+
+  const queryClient = useQueryClient()
+
+  const likeMutation = useMutation({
+    mutationFn: blogService.update,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['blogs']})
+    }
+  })
+
+  const deleteMutation = useMutation({
+    mutationFn: blogService.deleteBlog,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['blogs']})
+    }
+  })
+
   const [visible, setVisible] = useState(false);
 
   const showWhenVisible = { display: visible ? "" : "none" };
@@ -15,13 +32,9 @@ const Blog = ({ blog, user }) => {
     setVisible(!visible);
   };
 
-  const handleClike = async (event) => {
+  const handleClikeLike = async (event) => {
     event.preventDefault();
-    try {
-      dispatch(addLike({ ...blog, likes: blog.likes + 1 }))
-    } catch (exception) {
-      console.log(exception);
-    }
+    likeMutation.mutate({ ...blog, likes: blog.likes + 1 })
   };
 
   const handleClikeDelete = async (event) => {
@@ -30,7 +43,7 @@ const Blog = ({ blog, user }) => {
       if (
         window.confirm(`Remove blog ${blog.title} by ${blog.author}`)
       ) {
-        dispatch(removeBLog(blog))
+        deleteMutation.mutate(blog.id)
       }
     } catch (exception) {
       console.log(exception);
@@ -57,7 +70,7 @@ const Blog = ({ blog, user }) => {
         <div>{blog.url}</div>
         <div>
           {blog.likes}
-          <button onClick={handleClike}>like</button>
+          <button onClick={handleClikeLike}>like</button>
         </div>
         <div>{blog.user.name}</div>
         <div style={showWhenUser}>
