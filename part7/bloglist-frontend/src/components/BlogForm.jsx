@@ -5,7 +5,7 @@ import { createBlog } from "../reducers/blogReducer";
 import { setNotification } from "../reducers/notificationReducer";
 
 const BlogForm = ({ blogFormRef }) => {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
@@ -20,12 +20,14 @@ const BlogForm = ({ blogFormRef }) => {
       setUrl("");
       blogFormRef.current.toggleVisibility();
 
-      dispatch(createBlog({
-        title,
-        author,
-        url,
-      }))
-      dispatch(setNotification(`a new blog ${title} by ${author}`, 5000))
+      dispatch(
+        createBlog({
+          title,
+          author,
+          url,
+        }),
+      );
+      dispatch(setNotification(`a new blog ${title} by ${author}`, 5000));
     } catch (exception) {
       console.log(exception);
     }

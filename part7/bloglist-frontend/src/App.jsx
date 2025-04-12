@@ -5,14 +5,14 @@ import Blog from "./components/Blog";
 import Notification from "./components/Notification";
 import BlogForm from "./components/BlogForm";
 import Togglable from "./components/Togglable";
-import { setUser, Login } from "./reducers/userReducer"
+import { setUser, Login } from "./reducers/userReducer";
 import { setNotification } from "./reducers/notificationReducer";
 
 const App = () => {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
-  const blogs = useSelector( state => state.blogs )
-  const user = useSelector( state => state.user )
+  const blogs = useSelector((state) => state.blogs);
+  const user = useSelector((state) => state.user);
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -29,21 +29,20 @@ const App = () => {
 
   const handleLogin = async (event) => {
     event.preventDefault();
-
     try {
-      dispatch(Login(username, password))
+      dispatch(Login(username, password));
       window.localStorage.setItem("loggedBlogappUser", JSON.stringify(user));
+      
       setUser(user);
       setUsername("");
       setPassword("");
     } catch (exception) {
       console.log(exception);
-      
       dispatch(setNotification("Wrong credentials", 5000));
     }
   };
 
-  const logout = () => {
+  const handleLogout = () => {
     setUser(null);
     window.localStorage.removeItem("loggedblogappUser");
   };
@@ -85,10 +84,10 @@ const App = () => {
         <div>
           <p>
             {user.name} logged-in
-            <button onClick={logout}>logout</button>
+            <button onClick={handleLogout}>logout</button>
           </p>
           <Togglable buttonLabel="new note" ref={blogFormRef}>
-            <BlogForm blogFormRef={blogFormRef}/>
+            <BlogForm blogFormRef={blogFormRef} />
           </Togglable>
         </div>
       )}
@@ -96,11 +95,7 @@ const App = () => {
       {blogs
         .toSorted((a, b) => b.likes - a.likes)
         .map((blog) => (
-          <Blog
-            key={blog.id}
-            blog={blog}
-            user={user}
-          />
+          <Blog key={blog.id} blog={blog} user={user} />
         ))}
     </div>
   );
