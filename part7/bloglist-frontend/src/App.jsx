@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { Routes, Route, NavLink } from "react-router";
 
 import BlogList from "./components/BlogList";
 import UserList from "./components/UserList";
@@ -9,6 +10,8 @@ import Togglable from "./components/Togglable";
 import { setUser, Login } from "./reducers/userReducer";
 import { setNotification } from "./reducers/notificationReducer";
 
+import User from "./components/User";
+import Blog from "./components/Blog";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -76,24 +79,32 @@ const App = () => {
 
   return (
     <div>
-      <h1>Blogs</h1>
-      <Notification />
-
-      {user === null ? (
-        loginForm()
-      ) : (
-        <div>
-          <p>
+      <nav>
+        <NavLink to="/" end>blogs </NavLink>
+        <NavLink to="/users" end>users </NavLink>
+        {user === null ? (
+          loginForm()
+        ) : (
+          <>
             {user.name} logged-in
             <button onClick={handleLogout}>logout</button>
-          </p>
-          <Togglable buttonLabel="new note" ref={blogFormRef}>
-            <BlogForm blogFormRef={blogFormRef} />
-          </Togglable>
-        </div>
-      )}
-      <BlogList />
-      <UserList />
+            <Togglable buttonLabel="new note" ref={blogFormRef}>
+              <BlogForm blogFormRef={blogFormRef} />
+            </Togglable>
+          </>
+        )}
+      </nav>
+
+      <Notification />
+      <h2>blog app</h2>
+
+      <Routes>
+        <Route path="/" element={<BlogList />} />
+        <Route path="/blogs" element={<BlogList />} />
+        <Route path="/users" element={<UserList />} />
+        <Route path="/users/:id" element={<User />} />
+        <Route path="/blogs/:id" element={<Blog />} />
+      </Routes>
     </div>
   );
 };
