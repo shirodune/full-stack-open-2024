@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
+import Users from "./components/Users";
 import Blog from "./components/Blog";
 import Notification from "./components/Notification";
 import BlogForm from "./components/BlogForm";
@@ -97,6 +98,7 @@ const App = () => {
         .map((blog) => (
           <Blog key={blog.id} blog={blog} user={user} />
         ))}
+      <Users />
     </div>
   );
 };
