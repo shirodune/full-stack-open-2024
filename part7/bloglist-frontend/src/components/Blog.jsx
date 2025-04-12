@@ -1,21 +1,25 @@
-import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router";
+
 import { addLike, removeBLog } from "../reducers/blogReducer";
 
-const Blog = ({ blog, user }) => {
-  const dispatch = useDispatch();
-  const [visible, setVisible] = useState(false);
+const Blog = () => {
+  let { id } = useParams()
 
-  const showWhenVisible = { display: visible ? "" : "none" };
+  const dispatch = useDispatch();
+  const blogs = useSelector((state) => state.blogs)
+  const user = useSelector((state) => state.user)
+  const blog = blogs.find((blog) => blog.id === id)
+
+  if (!blog) {
+    return null
+  }
+
   const showWhenUser = {
     display: user && user.username === blog.user.username ? "" : "none",
   };
 
-  const toggleVisibility = () => {
-    setVisible(!visible);
-  };
-
-  const handleClike = async (event) => {
+  const handleClikeLike = async (event) => {
     event.preventDefault();
     try {
       dispatch(addLike({ ...blog, likes: blog.likes + 1 }));
@@ -35,29 +39,16 @@ const Blog = ({ blog, user }) => {
     }
   };
 
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: "solid",
-    borderWidth: 1,
-    marginBottom: 5,
-  };
-
   return (
-    <div className="blog" style={blogStyle}>
-      <div>
-        {blog.title} {blog.author}
-        <button onClick={toggleVisibility}>
-          {visible === false ? "show" : "hide"}
-        </button>
-      </div>
-      <div className="details" style={showWhenVisible}>
+    <div className="blog">
+      <h2>{blog.title}</h2>
+      <div className="details">
         <div>{blog.url}</div>
         <div>
-          {blog.likes}
-          <button onClick={handleClike}>like</button>
+          {blog.likes} likes
+          <button onClick={handleClikeLike}>like</button>
         </div>
-        <div>{blog.user.name}</div>
+        <div>added by {blog.user.name}</div>
         <div style={showWhenUser}>
           <button onClick={handleClikeDelete}>remove</button>
         </div>
